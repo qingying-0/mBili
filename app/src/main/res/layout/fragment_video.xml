@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView_portrait"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/head"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="240dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_search_button"
+                    android:drawableLeft="@drawable/ico_search"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:stateListAnimator="@null"
+                    android:text="ganwumei-xiaomai"
+                    android:textAppearance="@null"
+                    android:textColor="#6A6868"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView_portrait"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ico_news" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ico_record" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="360dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabIndicatorColor="#fb7299"
+                    app:tabIndicatorFullWidth="false"
+
+                    app:tabSelectedTextColor="#fb7299"
+                    app:tabTextColor="@color/black">
+
+                    <com.google.android.material.tabs.TabItem
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="直播" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="推荐" />
+
+                    <com.google.android.material.tabs.TabItem
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="热门" />
+
+                    <com.google.android.material.tabs.TabItem
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="动画" />
+
+                    <com.google.android.material.tabs.TabItem
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="影视" />
+
+
+                </com.google.android.material.tabs.TabLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.QYqx.mbili.module.video.customView.ViewPager2Container
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="88dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+    </com.QYqx.mbili.module.video.customView.ViewPager2Container>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
