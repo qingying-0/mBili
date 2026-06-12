@@ -3,9 +3,11 @@ package com.QYqx.mbili.network.base
 /**
  * 网络数据返回基类
  */
+import com.google.gson.annotations.SerializedName
+
 data class BaseResponse<T>(
-    var code: Int? = 0,
-    val message: String? = null,
-    val ttl: Int? = 0,
-    val data: T? = null
+    @SerializedName("code") val code: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("ttl") val ttl: Int,
+    @SerializedName("data") val data: T?
 )

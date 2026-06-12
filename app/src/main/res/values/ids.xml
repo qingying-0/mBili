@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 弹幕回收状态标记ID -->
+    <item name="tag_danmu_recycled" type="id" />
+    <!-- 弹幕数据存储ID -->
+    <item name="tag_danmu_data" type="id" />
+    <item name="tag_danmu_init_left" type="id" />
+    <item name="tag_danmu_animator" type="id" />
+
+
+</resources>

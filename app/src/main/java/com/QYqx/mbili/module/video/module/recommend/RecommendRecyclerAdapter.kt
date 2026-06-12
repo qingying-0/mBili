@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.RecyclerView
 import com.QYqx.mbili.MbiliApplication
 import com.QYqx.mbili.R
@@ -18,168 +17,172 @@ import com.QYqx.mbili.databinding.ItemRecommendBinding
 import com.QYqx.mbili.module.otherActivity.LoginActivity
 import com.QYqx.mbili.module.video.module.recommend.parts.BannerDataBean
 import com.QYqx.mbili.module.video.module.recommend.parts.VideoCard
-import com.QYqx.mbili.module.video.module.videoPlayer.videoPlayerActivity
+import com.QYqx.mbili.module.video.module.videoPlayer.VideoPlayerActivity
 import com.bumptech.glide.Glide
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.indicator.CircleIndicator
 
-
 /**
- * @data on 2020/9/25 9:05 AM
- * @auther armStrong
- * @describe Recycler使用
+ * 适配器：仅负责UI渲染和条目点击事件，不处理业务逻辑
  */
-class RecommendRecyclerAdapter(private var cardList: ArrayList<VideoCard>, val lifecycleOwner: LifecycleOwner ,private val activity: Activity) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        val bannerList:ArrayList<BannerDataBean> = ArrayList<BannerDataBean>()
-        val ItemViewTypeBanner:Int=0
-        val ItemViewTypeCard:Int=1
+class RecommendRecyclerAdapter(
+    private var cardList: MutableList<VideoCard>,
+    val lifecycleOwner: LifecycleOwner,
+    private val activity: Activity
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    val bannerList: ArrayList<BannerDataBean> = ArrayList()
+    val ItemViewTypeBanner: Int = 0
+    val ItemViewTypeCard: Int = 1
+
     init {
-        bannerList.add(BannerDataBean(R.drawable.banner1,"",0))
-        bannerList.add(BannerDataBean(R.drawable.banner2,"",0))
-        bannerList.add(BannerDataBean(R.drawable.banner3,"",0))
-        bannerList.add(BannerDataBean(R.drawable.banner4,"",0))
+        // 初始化Banner数据
+        bannerList.add(BannerDataBean(R.drawable.banner1, "", 0))
+        bannerList.add(BannerDataBean(R.drawable.banner2, "", 0))
+        bannerList.add(BannerDataBean(R.drawable.banner3, "", 0))
+        bannerList.add(BannerDataBean(R.drawable.banner4, "", 0))
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (position){
-            0->return ItemViewTypeBanner
-            else->return ItemViewTypeCard
-        }
+        return if (position == 0) ItemViewTypeBanner else ItemViewTypeCard
     }
 
-    //动态设置布局管理器行数
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
         val manager = recyclerView.layoutManager
         if (manager is GridLayoutManager) {
-            manager.spanSizeLookup = object : SpanSizeLookup() {
+            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return if (getItemViewType(position) == ItemViewTypeBanner) {
-                        2 //返回2展示一行
-                    } else {
-                        1 //返回1展示两行
-                    }
+                    return if (getItemViewType(position) == ItemViewTypeBanner) 2 else 1
                 }
             }
         }
     }
-    public fun setData(cardList: ArrayList<VideoCard>) {
+
+    // 规范数据更新：使用ArrayList接收，避免类型转换问题
+    fun setData(cardList: MutableList<VideoCard>) {
         this.cardList = cardList
-        notifyDataSetChanged()
+        notifyDataSetChanged() // 若需更高效更新，可使用DiffUtil
     }
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RecyclerView.ViewHolder {
 
-
-
-        when (viewType){
-            ItemViewTypeBanner-> {
-                val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_banner, parent, false)
-                    return TopBannerHolder(view)
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            ItemViewTypeBanner -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_banner, parent, false)
+                TopBannerHolder(view)
             }
-            else-> {
-                val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_recommend, parent, false)
-                return CardHolder(view)
+            else -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_recommend, parent, false)
+                CardHolder(view)
             }
         }
-
     }
 
-    override fun getItemCount(): Int = cardList.size+1 ?: 1
+    override fun getItemCount(): Int {
+        // 安全返回条目数：避免cardList为空导致异常
+        return (cardList.size + 1).coerceAtLeast(1)
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val viewType = getItemViewType(position)
-        when(viewType){
-            ItemViewTypeBanner-> {
-                (holder as TopBannerHolder).binding.banner.addBannerLifecycleObserver(lifecycleOwner)//添加生命周期观察者
+        when (getItemViewType(position)) {
+            ItemViewTypeBanner -> {
+                val bannerHolder = holder as TopBannerHolder
+                bannerHolder.binding.banner
+                    .addBannerLifecycleObserver(lifecycleOwner)
                     .setAdapter(ImageAdapter(bannerList))
-                    .setIndicator(CircleIndicator((holder as TopBannerHolder).context));
-
+                    .setIndicator(CircleIndicator(bannerHolder.context))
             }
-            else-> {
-                if (!cardList.get(position-1).picUrl_4_3.isEmpty()){
-                    cardList.get(position-1).picUrl=cardList.get(position-1).picUrl_4_3
-                }
-                cardList.get(position-1).picUrl=cardList.get(position-1).picUrl.replaceFirst("http:","https:")
+            ItemViewTypeCard -> {
+                // 安全获取数据：避免position越界
+                val realPosition = position - 1
+                if (realPosition >= cardList.size) return
 
-                Glide.with((holder as CardHolder).binding.imageViewCover)
-                    .load(cardList.get(position-1).picUrl)
+                val cardHolder = holder as CardHolder
+                val videoCard = cardList[realPosition]
+
+                // 处理图片链接
+                val picUrl = if (videoCard.picUrl_4_3.isNotEmpty()) {
+                    videoCard.picUrl_4_3
+                } else {
+                    videoCard.picUrl
+                }.replaceFirst("http:", "https:")
+
+                // 加载图片
+                Glide.with(cardHolder.binding.imageViewCover)
+                    .load(picUrl)
                     .error(R.drawable.ic_launcher_foreground)
-                    .into((holder as CardHolder).binding.imageViewCover)
+                    .into(cardHolder.binding.imageViewCover)
 
-                if (cardList.get(position-1).playNum/10000>0){
-                    (holder as CardHolder).binding.textViewPlay.setText((cardList.get(position-1).playNum/10000).toString()+"万")
-                }else{
-                    (holder as CardHolder).binding.textViewPlay.setText(cardList.get(position-1).playNum.toString())
+                // 处理播放数
+                val playText = if (videoCard.playNum / 10000 > 0) {
+                    "${videoCard.playNum / 10000}万"
+                } else {
+                    videoCard.playNum.toString()
                 }
-                (holder as CardHolder).binding.textViewDanmu.setText(cardList.get(position-1).danmuNum.toString())
-                if (cardList.get(position-1).time/60>0){
-                    (holder as CardHolder).binding.textViewTime.setText((cardList.get(position-1).time/60).toString()+":"+(cardList.get(position-1).time%60).toString())
-                }else{
-                    (holder as CardHolder).binding.textViewTime.setText("00:"+cardList.get(position-1).time.toString())
+                cardHolder.binding.textViewPlay.text = playText
+
+                // 绑定其他数据
+                cardHolder.binding.textViewDanmu.text = videoCard.danmuNum.toString()
+                val timeText = if (videoCard.time / 60 > 0) {
+                    "${videoCard.time / 60}:${String.format("%02d", videoCard.time % 60)}"
+                } else {
+                    "00:${String.format("%02d", videoCard.time)}"
                 }
+                cardHolder.binding.textViewTime.text = timeText
+                cardHolder.binding.textViewTitle.text = videoCard.title
+                cardHolder.binding.textViewUp.text = videoCard.upName
 
-                (holder as CardHolder).binding.textViewTitle.setText(cardList.get(position-1).title)
-                (holder as CardHolder).binding.textViewUp.setText(cardList.get(position-1).upName)
-                (holder as CardHolder).binding.card.setOnClickListener {
-                    val intent = Intent(activity, videoPlayerActivity::class.java)
-
+                // 条目点击事件
+                cardHolder.binding.card.setOnClickListener {
+                    val intent = Intent(activity, VideoPlayerActivity::class.java)
+                    intent.putExtra("cid",videoCard.cid)
+                    intent.putExtra("bvid",videoCard.bvid)
                     activity.startActivity(intent)
                 }
-
             }
         }
-
     }
 
     class TopBannerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding:ItemBannerBinding=ItemBannerBinding.bind(itemView)
-        val context: Context =itemView.context
+        val binding: ItemBannerBinding = ItemBannerBinding.bind(itemView)
+        val context: Context = itemView.context
     }
+
     class CardHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val binding:ItemRecommendBinding=ItemRecommendBinding.bind(itemView)
+        val binding: ItemRecommendBinding = ItemRecommendBinding.bind(itemView)
     }
-    class ImageAdapter(mDatas: List<BannerDataBean?>?) : BannerAdapter<BannerDataBean, ImageAdapter.BannerViewHolder>(mDatas) {
-        //更新数据
-        fun updateData(data: List<BannerDataBean?>?) {
-            //这里的代码自己发挥，比如如下的写法等等
+
+    class ImageAdapter(mDatas: List<BannerDataBean>?) :
+        BannerAdapter<BannerDataBean, ImageAdapter.BannerViewHolder>(mDatas) {
+
+        fun updateData(data: List<BannerDataBean>?) {
             mDatas.clear()
-            mDatas.addAll(data!!)
+            data?.let { mDatas.addAll(it) }
             notifyDataSetChanged()
         }
 
-        //创建ViewHolder，可以用viewType这个字段来区分不同的ViewHolder
         override fun onCreateHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
             val imageView = ImageView(parent.context)
-            //注意，必须设置为match_parent，这个是viewpager2强制要求的
             val params = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            imageView.setLayoutParams(params)
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP)
+            imageView.layoutParams = params
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             return BannerViewHolder(imageView)
         }
-        override fun onBindView(holder: BannerViewHolder, data: BannerDataBean, position: Int, size: Int) {
+
+        override fun onBindView(
+            holder: BannerViewHolder,
+            data: BannerDataBean,
+            position: Int,
+            size: Int
+        ) {
             holder.imageView.setImageResource(data.imageRes)
         }
 
-
         class BannerViewHolder(var imageView: ImageView) : RecyclerView.ViewHolder(imageView)
-
-
     }
-
-
-
-
-
-
-
-
 }

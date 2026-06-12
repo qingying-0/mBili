@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.QYqx.mbili.module.video.VideoViewModel
 
 /**
  * Fragment基类

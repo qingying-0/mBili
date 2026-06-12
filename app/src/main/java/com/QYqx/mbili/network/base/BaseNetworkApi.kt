@@ -4,7 +4,7 @@ package com.QYqx.mbili.network.base
 
 
 import com.QYqx.mbili.MbiliApplication
-import com.QYqx.mbili.network.base.base.IService
+import com.QYqx.mbili.MbiliApplication.GlobalCookieJar
 import com.QYqx.mbili.network.interceptor.CommonRequestInterceptor
 import com.QYqx.mbili.network.interceptor.CommonResponseInterceptor
 import com.QYqx.mbili.network.util.persistentcookiejar.PersistentCookieJar
@@ -19,11 +19,13 @@ import java.lang.reflect.ParameterizedType
 import java.util.concurrent.TimeUnit
 
 
-abstract class BaseNetworkApi<I>(private val baseUrl: String) : IService<I> {
+abstract class BaseNetworkApi<I>(private val baseUrl: String){
 
     protected val service: I by lazy {
         getRetrofit().create(getServiceClass())
     }
+    // 全局共享的 PersistentCookieJar 实例（实现与webview共享cookies）
+
 
     protected open fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
@@ -61,16 +63,17 @@ abstract class BaseNetworkApi<I>(private val baseUrl: String) : IService<I> {
         private const val RETRY_COUNT =1
         private val defaultOkHttpClient by lazy {
 
-            val cookieJar = PersistentCookieJar(
-                SetCookieCache(),
-                SharedPrefsCookiePersistor(MbiliApplication.appContext)
-            )
+
+//            val cookieJar = PersistentCookieJar(
+//                SetCookieCache(),
+//                SharedPrefsCookiePersistor(MbiliApplication.appContext)
+//            )
             val builder = OkHttpClient.Builder()
                 .callTimeout(10L, TimeUnit.SECONDS)
                 .connectTimeout(10L, TimeUnit.SECONDS)
                 .readTimeout(10L, TimeUnit.SECONDS)
                 .writeTimeout(10L, TimeUnit.SECONDS)
-                .cookieJar(cookieJar)
+                .cookieJar(GlobalCookieJar.instance)
                 .retryOnConnectionFailure(true)
 
             builder.addInterceptor(CommonRequestInterceptor())

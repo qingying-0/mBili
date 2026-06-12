@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 注意：无多余标签，直接用layer-list包裹背景和进度轨道 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 1. 背景轨道（对应系统默认id：@android:id/background） -->
+    <item android:id="@android:id/background"
+        android:gravity="center_vertical"
+        >
+        <!-- 内嵌shape，无需引用外部文件，避免额外资源缺失问题 -->
+        <shape android:shape="rectangle">
+            <!-- 背景色（浅灰色，可自定义） -->
+            <solid android:color="#E0E0E0" />
+            <!-- 圆角（与进度轨道保持一致，视觉协调） -->
+            <corners android:radius="0.5dp" />
+            <!-- 轨道高度（控制SeekBar粗细，可自定义） -->
+            <size android:height="1.5dp" />
+        </shape>
+    </item>
+
+    <!-- 2. 进度轨道（对应系统默认id：@android:id/progress） -->
+    <item android:id="@android:id/progress"
+        android:gravity="center_vertical"
+        >
+        <!-- 必须用clip标签，实现水平方向进度裁剪 -->
+        <clip android:clipOrientation="horizontal">
+            <shape android:shape="rectangle">
+                <!-- 进度色（高亮色，可自定义） -->
+                <solid android:color="#FF5CA1" />
+                <!-- 与背景轨道圆角一致 -->
+                <corners android:radius="0.5dp" />
+                <!-- 与背景轨道高度一致 -->
+                <size android:height="1.5dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

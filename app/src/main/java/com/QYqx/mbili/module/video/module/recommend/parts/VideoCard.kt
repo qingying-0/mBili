@@ -8,4 +8,6 @@ data class VideoCard(
     var danmuNum:Int,
     var time:Int,
     var upName:String,
+    var bvid:String,
+    var cid:Long,
 ){}

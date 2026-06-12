@@ -1,5 +1,6 @@
 package com.QYqx.mbili.network.interceptor
 
+import android.util.Log
 import android.webkit.CookieManager
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -13,6 +14,8 @@ class CommonRequestInterceptor : Interceptor {
         // 这里添加公共请求头
 //        builder.addHeader("brand", Build.BRAND)
 //        builder.addHeader("model", Build.MODEL)
+
+
         builder.addHeader("accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
         builder.addHeader("accept-language","zh-CN,zh;q=0.9")
         builder.addHeader("cookie", CookieManager.getInstance().getCookie("https://m.bilibili.com/")?:"buvid3=2C2E55E3-14DF-AECA-CBD4-3555E57AEBC643342infoc; b_nut=1728730244; buvid4=71C74A55-0A6F-F975-87D3-ABA924922DB843342-024101210-apI5nzhLjhWQB0u/3Si3CQ%3D%3D")

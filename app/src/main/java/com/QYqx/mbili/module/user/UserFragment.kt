@@ -1,11 +1,14 @@
 package com.QYqx.mbili.module.user
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.QYqx.mbili.databinding.FragmentUserBinding
 import com.QYqx.mbili.module.base.BaseFragment
+import com.QYqx.mbili.module.otherActivity.downloadList.DownloadActivity
+import com.QYqx.mbili.module.video.module.videoPlayer.VideoPlayerActivity
 
 
 class UserFragment : BaseFragment<FragmentUserBinding>() {
@@ -19,6 +22,10 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
     }
 
     private fun initView() {
+        viewBinding.imageViewDownload.setOnClickListener{
+            val intent = Intent(activity, DownloadActivity::class.java)
+            activity.startActivity(intent)
+        }
 
     }
 
